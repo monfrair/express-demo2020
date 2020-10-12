@@ -1,12 +1,25 @@
 // CRUD handler using express - RESTFUL API
-
+// stopped at 3 minutes of 6- Environments
 // joi is a class so starts with a capital - joi is validation package
+const morgan = require('morgan');
+const helmet = require('helmet');
 const Joi = require('joi');
+const logger = require('./logger');
 const express = require('express');
 const app = express();
 
-// adding express middleware to app
+console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
+console.log(`app: ${app.get('env')}`);
+
+// adding express middleware functions to app
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public')); //serve static content
+app.use(helmet());
+app.use(morgan('tiny'));
+
+//pulling in the loggerjs file middleware
+app.use(logger);
 
 // courses array
 const courses = [
