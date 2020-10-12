@@ -1,3 +1,5 @@
+// CRUD handler using express - RESTFUL API
+
 // joi is a class so starts with a capital - joi is validation package
 const Joi = require('joi');
 const express = require('express');
@@ -27,8 +29,7 @@ app.post('/api/courses', (req, res) => {
 	// if invalid, return 404 - bad request
 	if (error) {
 		// 400 bad request - below sends error message to user - joi will generate error messages based on what you set.
-		res.status(400).send(result.error.details[0].message);
-		return;
+		return res.status(400).send(result.error.details[0].message);
 	}
 
 	const course = {
@@ -40,17 +41,17 @@ app.post('/api/courses', (req, res) => {
 });
 
 // updating a course with put request
+// updating a course with put request
 app.put('/api/courses/:id', (req, res) => {
 	// look up the course - if not existing, return 404
 	const course = courses.find((c) => c.id === parseInt(req.params.id));
-	if (!course) res.status(404).send('This course was not found');
+	if (!course) return res.status(404).send('This course was not found');
 
 	const { error } = validateCourse(req.body); // same as result.error
 	// if invalid, return 404 - bad request
 	if (error) {
 		// 400 bad request - below sends error message to user - joi will generate error messages based on what you set.
-		res.status(400).send(error.details[0].message);
-		return;
+		return res.status(400).send(error.details[0].message);
 	}
 	// update course
 	course.name = req.body.name;
@@ -61,7 +62,7 @@ app.put('/api/courses/:id', (req, res) => {
 // api course: find and return course to user
 app.get('/api/courses/:id', (req, res) => {
 	const course = courses.find((c) => c.id === parseInt(req.params.id));
-	if (!course) res.status(404).send('This course was not found');
+	if (!course) return res.status(404).send('This course was not found');
 	res.send(course);
 });
 // function to validate put reqest from user
@@ -71,8 +72,20 @@ function validateCourse(course) {
 	};
 	return Joi.validate(course, schema);
 }
-
 // end of put request
+// end of put request
+
+// handler for delete course request
+app.delete('/api/courses/:id', (req, res) => {
+	//look for the course in the courses array and validate if it exists
+	const course = courses.find((c) => c.id === parseInt(req.params.id));
+	if (!course) return res.status(404).send('This course was not found');
+	// if course exists, delete from courses array
+	const index = courses.indexOf(course);
+	courses.splice(index, 1); //go to index and remove 1 item
+	// return the deleted course from the courses array
+	res.send(course);
+});
 
 // PORT env port set to 5000 - export PORT=5000 in terminal for app
 const port = process.env.PORT || 3000;
