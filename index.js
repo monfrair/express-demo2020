@@ -23,17 +23,14 @@ app.get('/api/courses', (req, res) => {
 
 // post course to app
 app.post('/api/courses', (req, res) => {
-	const schema = {
-		name: Joi.string().min(3).required(),
-	};
-	const result = Joi.validate(req.body, schema);
-	// console.log(result);
-
-	if (result.error) {
+	const { error } = validateCourse(req.body); // same as result.error
+	// if invalid, return 404 - bad request
+	if (error) {
 		// 400 bad request - below sends error message to user - joi will generate error messages based on what you set.
 		res.status(400).send(result.error.details[0].message);
 		return;
 	}
+
 	const course = {
 		id: courses.length + 1,
 		name: req.body.name,
@@ -52,7 +49,7 @@ app.put('/api/courses/:id', (req, res) => {
 	// if invalid, return 404 - bad request
 	if (error) {
 		// 400 bad request - below sends error message to user - joi will generate error messages based on what you set.
-		res.status(400).send(result.error.details[0].message);
+		res.status(400).send(error.details[0].message);
 		return;
 	}
 	// update course
@@ -74,6 +71,8 @@ function validateCourse(course) {
 	};
 	return Joi.validate(course, schema);
 }
+
+// end of put request
 
 // PORT env port set to 5000 - export PORT=5000 in terminal for app
 const port = process.env.PORT || 3000;
