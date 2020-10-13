@@ -1,5 +1,7 @@
 // CRUD handler using express - RESTFUL API
-
+// if issues with app, change npm version to 5.5.1
+const startupDebugger = require('debug')('app:startup');
+const dbDebugger = require('debug')('app:db');
 const config = require('config');
 const morgan = require('morgan');
 const helmet = require('helmet');
@@ -20,8 +22,12 @@ console.log('mail server: ' + config.get('mail.host'));
 
 if (app.get('env') === 'development') {
 	app.use(morgan('tiny'));
-	console.log('Morgan enabled...');
+	// console.log('Morgan enabled...');
+	startupDebugger('Morgan enabled...');
 }
+
+app.set('view engine', 'pug'); //express will auto load module
+app.set('views', './views'); // set as default HTML views
 
 // adding express middleware functions to app
 app.use(express.json());
@@ -41,7 +47,7 @@ const courses = [
 ];
 
 app.get('/', (req, res) => {
-	res.send('Hello world');
+	res.render('index.pug', { title: 'My express app', message: 'hello dummy' });
 });
 
 app.get('/api/courses', (req, res) => {
