@@ -9,7 +9,7 @@ const helmet = require('helmet');
 
 const Joi = require('joi');
 const logger = require('./logger');
-const courses = require('./');
+const courses = require('./routes/courses');
 const express = require('express');
 const app = express();
 
